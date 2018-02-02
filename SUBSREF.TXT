@@ -1,0 +1,32 @@
+         function varargout = subsref(obj, S)
+             
+%   B = SUBSREF(A,S) is called for the syntax A(I), A{I}, or A.I
+%   when A is an object.  S is a structure array with the fields:
+%       type -- string containing '()', '{}', or '.' specifying the
+%               subscript type.
+%       subs -- Cell array or string containing the actual subscripts.
+%
+%   For instance, the syntax A(1:2,:) invokes SUBSREF(A,S) where S is a
+%   1-by-1 structure with S.type='()' and S.subs = {1:2,':'}. A colon
+%   used as a subscript is passed as the string ':'.
+%
+%   Similarly, the syntax A{1:2} invokes SUBSREF(A,S) where S.type='{}'
+%   and the syntax A.field invokes SUBSREF(A,S) where S.type='.' and
+%   S.subs='field'.
+%
+%   These simple calls are combined in a straightforward way for
+%   more complicated subscripting expressions.  In such cases
+%   length(S) is the number of subscripting levels.  For instance, 
+%   A(1,2).name(3:5) invokes SUBSREF(A,S) where S is 3-by-1 structure
+%   array with the following values:
+%       S(1).type='()'       S(2).type='.'        S(3).type='()'
+%       S(1).subs={1,2}      S(2).subs='name'     S(3).subs={3:5}
+             
+            [varargout{1:nargout}] = builtin('subsref',obj,S);
+            
+            if numel(S) == 1 & S.type=='()'
+                for i = 1:nargout,
+                    varargout{i} = class(varargout{i},'testobj');
+                end
+            end
+         end
